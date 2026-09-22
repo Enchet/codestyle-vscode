@@ -1,71 +1,123 @@
-# codestyle-checker README
+# Google C++ Style Checker
 
-This is the README for your extension "codestyle-checker". After writing up a brief description, we recommend including the following sections.
+## what is this
 
-## Features
+VS Code extension that checks `.cpp` files using `clang-format`
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
-
-For example if there is an image subfolder under your extension project workspace:
-
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+If the code is different from the Google style formatting, it shows a warning
 
 ---
 
-## Following extension guidelines
+## requirements
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+* VS Code
+* Node.js
+* clang-format
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+Check clang-format with
 
-## Working with Markdown
+```bash
+clang-format --version
+```
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+clang-format must be in your system's PATH for the extension to work
+---
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+## how it works
 
-## For more information
+```text
+cpp file
+   ->
+clang-format
+   ->
+compare
+   ->
+warning if different
+```
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+The extension sends the file to clang-format through stdin instead of using a temporary file
 
-**Enjoy!**
+---
+
+## main functions
+
+### `activate()`
+
+Starts the extension
+
+Sets up the commands and events for opening, changing and closing files
+
+---
+
+### `deactivate()`
+
+Cleans up the timers and diagnostics when the extension stops
+
+---
+
+### `scheduleCheck()`
+
+Adds a small delay before checking the file
+
+This stops clang-format from running on every keystroke
+
+---
+
+### `checkDocument()`
+
+Runs clang-format on the current document
+
+Sends the document through stdin and gets the formatted version from stdout
+
+---
+
+### `updateDiagnostics()`
+
+Compares the original file with the clang-format output
+
+Creates warnings when they are different
+
+---
+
+### `normalizeText()`
+
+Makes different newline types the same
+
+Mostly for Windows `\r\n` vs `\n`
+
+---
+
+### `findFirstDifference()`
+
+Finds the first character that is different between two lines
+
+Used to put the warning closer to the actual problem
+
+---
+
+## clang-format
+
+The extension uses Google style with
+
+```text
+BasedOnStyle: Google
+IndentWidth: 2
+UseTab: Never
+```
+
+It also uses
+
+```text
+--assume-filename=source.cpp
+```
+
+so clang-format knows the input is C++
+
+---
+
+## AI declaration
+
+The project was created with an assistance of AI tools with the following use-cases:
+
+* Asking the agent proper syntax standards for typescript and proper ways to interact with VSCode API
+* Grammar checking this README
