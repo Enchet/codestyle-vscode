@@ -21,6 +21,7 @@ clang-format --version
 ```
 
 clang-format must be in your system's PATH for the extension to work
+
 ---
 
 ## how it works
@@ -120,4 +121,6 @@ so clang-format knows the input is C++
 The project was created with an assistance of AI tools with the following use-cases:
 
 * Asking the agent proper syntax standards for typescript and proper ways to interact with VSCode API
+* Providing code snippets for some functions of the codebase
 * Grammar checking this README
+
