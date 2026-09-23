@@ -26,33 +26,23 @@ export function activate(context: vscode.ExtensionContext): void {
 
     //check already opened file
     if (vscode.window.activeTextEditor !== undefined) {
-        scheduleCheck(
-            vscode.window.activeTextEditor.document,
-            0
-        );
+        scheduleCheck(vscode.window.activeTextEditor.document, 0);
     }
 
-    //check new opened files
-    context.subscriptions.push(
-        vscode.workspace.onDidOpenTextDocument(
+    //check newly opened files
+    context.subscriptions.push(vscode.workspace.onDidOpenTextDocument(
             (document: vscode.TextDocument): void => {
                 scheduleCheck(document, 0);
-            }
-        )
-    );
+            }));
 
     //check edited files
-    context.subscriptions.push(
-        vscode.workspace.onDidChangeTextDocument(
+    context.subscriptions.push(vscode.workspace.onDidChangeTextDocument(
             (event: vscode.TextDocumentChangeEvent): void => {
                 scheduleCheck(event.document);
-            }
-        )
-    );
+            }));
 
     //clear all vars on file close
-    context.subscriptions.push(
-        vscode.workspace.onDidCloseTextDocument(
+    context.subscriptions.push(vscode.workspace.onDidCloseTextDocument(
             (document: vscode.TextDocument): void => {
                 const key = document.uri.toString();
 
@@ -64,12 +54,10 @@ export function activate(context: vscode.ExtensionContext): void {
                 }
 
                 diagnosticCollection.delete(document.uri);
-            }
-        )
-    );
+            }));
 }
 
-//clean up timer and diagnosticks on deactivation
+//clean up timers and diagnosticks on deactivation
 export function deactivate(): void {
     for (const timer of debounceTimers.values()) {
         clearTimeout(timer);
@@ -80,10 +68,7 @@ export function deactivate(): void {
 }
 
 //timer
-function scheduleCheck(
-    document: vscode.TextDocument,
-    delay = 300
-): void {
+function scheduleCheck(document: vscode.TextDocument,delay = 300): void {
     if (document.languageId !== "cpp") {
         return;
     }
@@ -237,16 +222,12 @@ function updateDiagnostics(document: vscode.TextDocument, formattedText: string)
                 vscode.DiagnosticSeverity.Warning
             );
 
-        diagnostic.source =
-            "Google C++ Style";
+        diagnostic.source = "Google C++ Style";
 
         diagnostics.push(diagnostic);
     }
 
-    diagnosticCollection.set(
-        document.uri,
-        diagnostics
-    );
+    diagnosticCollection.set(document.uri, diagnostics);
 }
 
 //normalize different newline types (mostly windows' fault)
