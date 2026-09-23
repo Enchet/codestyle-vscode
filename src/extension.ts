@@ -1,8 +1,7 @@
 import * as vscode from "vscode";
 import { spawn } from "node:child_process";
 
-const diagnosticCollection =
-    vscode.languages.createDiagnosticCollection("google-cpp-style");
+const diagnosticCollection = vscode.languages.createDiagnosticCollection("google-cpp-style");
 
 // timer to not run clang each keystroke
 const debounceTimers = new Map<string, NodeJS.Timeout>();
